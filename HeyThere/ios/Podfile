@@ -26,6 +26,10 @@ target 'HeyThere' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pre_install do |installer|
+    $RNMapboxMaps.pre_install(installer)
+  end
+
   target 'HeyThereTests' do
     inherit! :complete
     # Pods for testing
@@ -38,6 +42,7 @@ target 'HeyThere' do
       # necessary for Mac Catalyst builds
       :mac_catalyst_enabled => false
     )
+    $RNMapboxMaps.post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end

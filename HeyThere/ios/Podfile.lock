@@ -376,6 +376,13 @@ PODS:
     - React-perflogger (= 0.70.6)
   - RNDeviceInfo (10.3.0):
     - React-Core
+  - rnmapbox-maps (10.0.0-beta.65):
+    - React
+    - React-Core
+    - rnmapbox-maps/DynamicLibrary (= 10.0.0-beta.65)
+  - rnmapbox-maps/DynamicLibrary (10.0.0-beta.65):
+    - React
+    - React-Core
   - RNScreens (3.19.0):
     - React-Core
     - React-RCTImage
@@ -445,6 +452,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - "rnmapbox-maps (from `../node_modules/@rnmapbox/maps`)"
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -537,6 +545,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
+  rnmapbox-maps:
+    :path: "../node_modules/@rnmapbox/maps"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
@@ -591,11 +601,12 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 15437b576139df27635400de0599d9844f1ab817
   ReactCommon: 349be31adeecffc7986a0de875d7fb0dcf4e251c
   RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
+  rnmapbox-maps: a75f413bbb6ac9e284a2239602b64bd1924e7210
   RNScreens: ea4cd3a853063cda19a4e3c28d2e52180c80f4eb
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: ee94c5ef688ae529da0a7a4a063c1793a0a6a73e
+PODFILE CHECKSUM: 7b27e00bab65e591d997a2a96512555c4c3b54f5
 
 COCOAPODS: 1.11.3
