@@ -1,13 +1,14 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
+import ScreenLayout from '../components/ScreenLayout';
 
 function Map() {
 
-
     return (
-        <ScreenContainer
-            backgroundType={"screen"}>
-            <Text>Map screen</Text>
+        <ScreenContainer backgroundType={"screen"}>
+            <ScreenLayout useSafeArea >
+                <Text>Map screen</Text>
+            </ScreenLayout>
         </ScreenContainer>
     );
 }
