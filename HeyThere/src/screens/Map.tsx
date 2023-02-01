@@ -1,15 +1,21 @@
 import React, { useRef, useState } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Alert, Image, StyleSheet } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import ScreenLayout from '../components/ScreenLayout';
 import MapboxGL from "@rnmapbox/maps";
 import keys from '../constants/Keys';
-import Images from '../assets';
+import MarkerAnnotation from '../components/MarkerAnnotation';
+import { useNavigation } from '@react-navigation/native';
+import Header from '../components/Header';
+import Strings from '../strings/Strings';
 
 function Map() {
 
     const mapboxRef = useRef(null);
-    const [coordinates, setCordinates] = useState([])
+    const navigation = useNavigation();
+    const [coordinates, setCordinates] = useState([
+        [22.7196, 75.8577],
+    ])
 
     React.useEffect(() => {
         MapboxGL.setAccessToken(keys.access_token);
@@ -22,34 +28,26 @@ function Map() {
         };
     }, []);
 
-    React.useEffect(() => {
-       console.log('mapboxRef :', mapboxRef.current);
-    }, [mapboxRef]);
+    const onUserLocationUpdate = (location: any) => {
+         console.log('location :', location);
+    }
+
+    const onPressAnnotation = () => {
+        navigation.navigate('ChatScreen');
+    }
 
     const renderAnnotation = (counter: any) => {
-        const id = `pointAnnotation${counter}`;
-        const coordinate = coordinates[counter];
         return (
-            <MapboxGL.PointAnnotation
-                key={id}
-                id={id}
-                title='Test'
-                coordinate={coordinate}>
-                <Image
-                    source={Images.locationMarker}
-                    style={{
-                        flex: 1,
-                        resizeMode: 'contain',
-                        width: 25,
-                        height: 25
-                    }} />
-            </MapboxGL.PointAnnotation>
+            <MarkerAnnotation
+                counter={counter}
+                coordinates={coordinates}
+                onPress={onPressAnnotation}
+            />
         );
     }
 
     const renderAnnotations = () => {
         const items = [];
-
         for (let i = 0; i < coordinates.length; i++) {
             items.push(renderAnnotation(i));
         }
@@ -62,17 +60,18 @@ function Map() {
                 useSafeArea
                 paddingHorizontal={0}
                 paddingTop={0}
-                paddingBottom={0} >
+                paddingBottom={0}>
+                <Header title={Strings.APP_NAME} showBack={false} />
                 <MapboxGL.MapView
                     ref={mapboxRef}
                     style={styles.map}
                     zoomEnabled={true}
-                    userTrackingMode
-                >
+                    userTrackingMode>
                     <MapboxGL.UserLocation
                         visible={true}
                         animated={true}
                         requestsAlwaysUse={true}
+                        onUpdate={onUserLocationUpdate}
                         renderMode={"native"} />
                     {renderAnnotations()}
                 </MapboxGL.MapView>
@@ -84,9 +83,6 @@ function Map() {
 export default Map;
 
 const styles = StyleSheet.create({
-    container: {
-
-    },
     map: {
         flex: 1
     }
