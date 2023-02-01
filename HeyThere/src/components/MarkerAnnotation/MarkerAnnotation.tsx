@@ -5,14 +5,14 @@ import MapboxGL from "@rnmapbox/maps";
 import Images from '../../assets';
 
 interface MarkerAnnotationRequiredProps {
-    onPress: () => void;
+    onPress: (data: any) => void;
     counter: any;
     coordinates: any;
 }
 
 // Optional props
 interface MarkerAnnotationOptionalProps {
-     markerIconStyle? : ViewStyle
+    markerIconStyle?: ViewStyle
 }
 
 // Combine required and optional props to build the full prop interface
@@ -22,16 +22,15 @@ interface MarkerAnnotationProps
 
 const MarkerAnnotation: React.FC<MarkerAnnotationProps> = (props) => {
     const { onPress, counter, coordinates, markerIconStyle } = props;
-
     const id = `pointAnnotation${counter}`;
-    const coordinate = coordinates[counter];
+    const coordinate = coordinates[counter].cordinates;
     return (
         <MapboxGL.PointAnnotation
             key={id}
             id={id}
             title='Test'
             coordinate={coordinate}>
-            <TouchableOpacity onPress={() => { onPress() }}>
+            <TouchableOpacity onPress={() => { onPress(coordinates[counter]) }}>
                 <Animatable.Image
                     source={Images.locationMarker}
                     style={[styles.markerIconStyle, markerIconStyle]} />

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Alert, Image, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import ScreenLayout from '../components/ScreenLayout';
 import MapboxGL from "@rnmapbox/maps";
@@ -8,14 +8,15 @@ import MarkerAnnotation from '../components/MarkerAnnotation';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import Strings from '../strings/Strings';
+import FireStoreManager from '../firestore/FireStoreManager';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
+import { persistUserState, retriveUserState } from '../utils/LocalStore';
 
 function Map() {
 
     const mapboxRef = useRef(null);
     const navigation = useNavigation();
-    const [coordinates, setCordinates] = useState([
-        [22.7196, 75.8577],
-    ])
+    const [coordinates, setCordinates] = useState([]);
 
     React.useEffect(() => {
         MapboxGL.setAccessToken(keys.access_token);
@@ -28,12 +29,41 @@ function Map() {
         };
     }, []);
 
-    const onUserLocationUpdate = (location: any) => {
-         console.log('location :', location);
+    React.useEffect(() => {
+        getUserList()
+    }, [])
+
+    const getUserList = () => {
+        FireStoreManager.getAllUsers((allUsers: any) => {
+             if(allUsers?.length > 0) {
+                setCordinates(allUsers);
+             }
+        })
     }
 
-    const onPressAnnotation = () => {
-        navigation.navigate('ChatScreen');
+    const onUserLocationUpdate = async (location: any) => {
+        const deviceId = await getUniqueId()
+        const hasUserRegistered = await retriveUserState();
+        const currentDate = new Date();
+        const timestamp = currentDate.getTime();
+
+        const userdata = {
+            cordinates: [location.coords?.latitude, location.coords?.longitude],
+            deviceId: deviceId,
+            timestamp: timestamp
+        };
+
+        if (Boolean(hasUserRegistered)) {
+            return;
+        }
+
+        FireStoreManager.registerUser(userdata, (success: any) => {
+            persistUserState('true')
+        });
+    }
+
+    const onPressAnnotation = (data: any) => {
+        navigation.navigate('ChatScreen', { userData: data });
     }
 
     const renderAnnotation = (counter: any) => {
@@ -71,7 +101,7 @@ function Map() {
                         visible={true}
                         animated={true}
                         requestsAlwaysUse={true}
-                        onUpdate={onUserLocationUpdate}
+                        onUpdate={(location: any) => { onUserLocationUpdate(location) }}
                         renderMode={"native"} />
                     {renderAnnotations()}
                 </MapboxGL.MapView>

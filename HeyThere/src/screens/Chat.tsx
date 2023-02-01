@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useRef, useState } from 'react';
 import { Image, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import Images from '../assets';
@@ -13,8 +13,13 @@ function Chat() {
 
     const navigation = useNavigation();
     const chatListRef = useRef(null);
+    const routes = useRoute();
     const [messageList, setMessageList] = useState([]);
     const [message, setMessage] = useState('');
+
+    const currentUserData = routes?.params?.userData;
+
+    console.log('currentUserData :', currentUserData);
 
     const goBack = () => navigation.goBack();
 
