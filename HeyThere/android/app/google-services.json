@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "381093748127",
+    "project_id": "heythere-1d595",
+    "storage_bucket": "heythere-1d595.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381093748127:android:db04f00ebcc7434d7431aa",
+        "android_client_info": {
+          "package_name": "com.heythere"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "381093748127-8l8u3fj01k2vkgo708p9jg0ts73uiln7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVCVN1F9_d7SvG-AbIgHBo3wjJSqfVDtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "381093748127-8l8u3fj01k2vkgo708p9jg0ts73uiln7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "381093748127-g1pokamo1msk4gupikgphf4hd2pnvs28.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.heyThere"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
