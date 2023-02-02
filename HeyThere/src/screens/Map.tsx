@@ -25,7 +25,6 @@ function Map() {
         Geolocation.getCurrentPosition(info => {
             updateUserLocation(info.coords)
         });
-
         MapboxGL.setAccessToken(keys.access_token);
         MapboxGL.locationManager.start();
         return (): void => {
@@ -107,6 +106,10 @@ function Map() {
                     style={styles.map}
                     zoomEnabled={true}
                     userTrackingMode>
+                    <MapboxGL.Camera
+                        followUserLocation={true}
+                        followZoomLevel={11}
+                    />
                     <MapboxGL.UserLocation
                         visible={true}
                         animated={true}

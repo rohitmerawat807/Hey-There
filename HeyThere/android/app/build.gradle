@@ -135,6 +135,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    packagingOptions {
+    pickFirst 'lib/x86/libc++_shared.so'
+    pickFirst 'lib/x86_64/libc++_shared.so'
+    pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+    pickFirst 'lib/arm64-v8a/libc++_shared.so'
+}
+
     defaultConfig {
         applicationId "com.heythere"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -257,6 +264,8 @@ dependencies {
 
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.mapbox.maps:android:10.2.0'
+
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {

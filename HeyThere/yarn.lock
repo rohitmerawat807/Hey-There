@@ -6275,11 +6275,6 @@ react-native-screens@^3.19.0:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native-toasty@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-toasty/-/react-native-toasty-2.0.0.tgz#4f08e00fe87a0a87e20571be7ff1a3c1060a7298"
-  integrity sha512-AsmDNUJlJb6r7UYI5Wc+GF6Tp8eo0Ft1IujCKv47PavBrhXI8DHQol0/SDRN52hJ4ysxb9Q8tXAe2EBcYssf1w==
-
 react-native@0.70.6:
   version "0.70.6"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.70.6.tgz#d692f8b51baffc28e1a8bc5190cdb779de937aa8"
