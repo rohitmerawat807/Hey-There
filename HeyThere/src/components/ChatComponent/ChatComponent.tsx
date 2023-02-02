@@ -6,6 +6,7 @@ import colors from '../../constants/Colors';
 interface ChatComponentRequiredProps {
     userData: any;
     chatListRef: any;
+    otherUser: any
 }
 
 // Optional props
@@ -19,12 +20,13 @@ interface ChatComponentProps
     ChatComponentOptionalProps { }
 
 const ChatComponent: React.FC<ChatComponentProps> = (props) => {
-    const { userData, chatListRef } = props;
+    const { userData, chatListRef, otherUser } = props;
 
     const renderChatItem = ({ item }: any) => {
+        const isSender = otherUser?.id === item?.senderId;
         return (
-            <View style={item?.sender ? styles.senderView : styles.receiverView}>
-                <Text style={item?.sender ? styles.senderText : styles.receiverText}>{item.message}</Text>
+            <View style={!isSender ? styles.senderView : styles.receiverView}>
+                <Text style={!isSender ? styles.senderText : styles.receiverText}>{item.message}</Text>
             </View>
         )
     }

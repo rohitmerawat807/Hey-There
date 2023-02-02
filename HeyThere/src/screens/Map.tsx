@@ -9,8 +9,9 @@ import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import Strings from '../strings/Strings';
 import FireStoreManager from '../firestore/FireStoreManager';
-import { getUniqueId, getManufacturer } from 'react-native-device-info';
-import { persistUserState, retriveUserState } from '../utils/LocalStore';
+import { getUniqueId } from 'react-native-device-info';
+import { persistCurrentUserData, persistUserState, retriveUserState } from '../utils/LocalStore';
+import Geolocation from '@react-native-community/geolocation';
 
 function Map() {
 
@@ -19,38 +20,46 @@ function Map() {
     const [coordinates, setCordinates] = useState([]);
 
     React.useEffect(() => {
-        MapboxGL.setAccessToken(keys.access_token);
-    }, [])
+        getUserList()
 
-    React.useEffect(() => {
+        Geolocation.getCurrentPosition(info => {
+            updateUserLocation(info.coords)
+        });
+
+        MapboxGL.setAccessToken(keys.access_token);
         MapboxGL.locationManager.start();
         return (): void => {
             MapboxGL.locationManager.stop();
         };
     }, []);
 
-    React.useEffect(() => {
-        getUserList()
-    }, [])
+    const getUserList = async () => {
+        const deviceId = await getUniqueId();
 
-    const getUserList = () => {
         FireStoreManager.getAllUsers((allUsers: any) => {
-             if(allUsers?.length > 0) {
-                setCordinates(allUsers);
-             }
+            if (allUsers?.length > 0) {
+                let otherUsers: any = [];
+                allUsers?.map((user: any) => {
+                    if (user?.deviceId !== deviceId) {
+                        otherUsers.push(user);
+                    }
+                })
+                setCordinates(otherUsers);
+            }
         })
     }
 
-    const onUserLocationUpdate = async (location: any) => {
-        const deviceId = await getUniqueId()
+    const updateUserLocation = async (location: any) => {
+        const deviceId = await getUniqueId();
         const hasUserRegistered = await retriveUserState();
         const currentDate = new Date();
         const timestamp = currentDate.getTime();
 
         const userdata = {
-            cordinates: [location.coords?.latitude, location.coords?.longitude],
+            cordinates: [location.latitude, location.longitude],
             deviceId: deviceId,
-            timestamp: timestamp
+            timestamp: timestamp,
+            messageList: []
         };
 
         if (Boolean(hasUserRegistered)) {
@@ -58,7 +67,8 @@ function Map() {
         }
 
         FireStoreManager.registerUser(userdata, (success: any) => {
-            persistUserState('true')
+            persistUserState('true');
+            persistCurrentUserData(success);
         });
     }
 
@@ -101,7 +111,6 @@ function Map() {
                         visible={true}
                         animated={true}
                         requestsAlwaysUse={true}
-                        onUpdate={(location: any) => { onUserLocationUpdate(location) }}
                         renderMode={"native"} />
                     {renderAnnotations()}
                 </MapboxGL.MapView>

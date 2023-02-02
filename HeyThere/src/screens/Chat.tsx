@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Image, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import Images from '../assets';
 import ChatComponent from '../components/ChatComponent';
@@ -7,7 +7,9 @@ import Header from '../components/Header';
 import ScreenContainer from '../components/ScreenContainer';
 import ScreenLayout from '../components/ScreenLayout';
 import colors from '../constants/Colors';
+import FireStoreManager from '../firestore/FireStoreManager';
 import Strings from '../strings/Strings';
+import { retriveCurrentUserData } from '../utils/LocalStore';
 
 function Chat() {
 
@@ -15,25 +17,86 @@ function Chat() {
     const chatListRef = useRef(null);
     const routes = useRoute();
     const [messageList, setMessageList] = useState([]);
+    const [receiverList, setReceiverMessageList] = useState([]);
     const [message, setMessage] = useState('');
+    const [selfUserData, setSelfUserData] = useState({});
+    const otherUser = routes?.params?.userData;
 
-    const currentUserData = routes?.params?.userData;
+    React.useEffect(() => {
+        getReceiversMessages()
+        getSelfUser()
+    }, [])
 
-    console.log('currentUserData :', currentUserData);
+    const getReceiversMessages = async () => {
+        FireStoreManager.getReceiversMessages(otherUser?.id, (response: any) => {
+            if (Boolean(response)) {
+                const allMessages: any = [...receiverList]
+                const tempMessages = response[0]?.messageList;
+                tempMessages?.map((message: any) => {
+                    allMessages.push(message);
+                })                
+                setReceiverMessageList(allMessages);
+            }
+        })
+    }
+
+    const getChatHistory = (userId: string) => {
+        FireStoreManager.getReceiversMessages(userId, (response: any) => {
+            if (Boolean(response)) {
+                const allMessages: any = [...messageList]                
+                const tempMessages = response[0]?.messageList;
+                tempMessages?.map((message: any) => {
+                    allMessages.push(message);
+                })
+                setMessageList(allMessages);
+            }
+        })
+    }
+
+    const getSelfUser = async () => {
+        const data = await retriveCurrentUserData()
+        if (Boolean(data)) {
+            getChatHistory(data?.id)
+            setSelfUserData(data);
+        }
+    };
 
     const goBack = () => navigation.goBack();
 
     const sendMessage = () => {
-        const newArray = [...messageList];
+
+        if (!message) {
+            return;
+        }
+
+        const currentDate = new Date();
+        const timestamp = currentDate.getTime();
+
+        const newArray: any = [...messageList];
         const newMessageObj = {
             message: message,
-            sender: true
+            senderId: selfUserData.id,
+            receiverId: otherUser?.id,
+            createdAt: timestamp
         }
         newArray.push(newMessageObj);
         setMessageList(newArray);
-        setMessage("");
-        chatListRef.current.scrollToEnd();
+
+        FireStoreManager.updateMessageList(newArray, selfUserData.id, (response: boolean) => {
+            if (response) {
+                setMessage("");
+                chatListRef.current.scrollToEnd();
+            }
+        })
+
     }
+
+    const messages = receiverList.concat(messageList);
+    messages.sort((x, y) => {
+        return new Date(x.timestamp) < new Date(y.timestamp) ? 1 : -1
+    }).reverse();
+
+    console.log('messages :', messages);
 
     return (
         <ScreenContainer
@@ -50,7 +113,7 @@ function Chat() {
                     showBack={true}
                     onBackPress={goBack} />
 
-                <ChatComponent chatListRef={chatListRef} userData={messageList} />
+                <ChatComponent chatListRef={chatListRef} userData={messages} otherUser={otherUser} />
 
                 <View style={styles.messageBoxVeew}>
                     <TextInput

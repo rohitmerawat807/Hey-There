@@ -6,10 +6,16 @@ class FireStoreManager {
     static registerUser = async (userData: any, callback: any) => {
         firestore().collection(FirebaseKeys.USER).add(userData).then(
             (response) => {
-                console.log('response :', response);
                 if (response.id) {
                     userData.id = response.id;
-                    callback(userData);
+                    firestore().collection(FirebaseKeys.USER).doc(response.id).update({
+                        id: response.id
+                    }).then(() => {
+                        console.log("user updated successfully");
+                        callback(userData);
+                    }).catch((error) => {
+                        callback(error);
+                    });
                 }
             }
         ).catch((error) => {
@@ -27,6 +33,33 @@ class FireStoreManager {
                 });
                 callback(dataAlpha);
             });
+    }
+
+    static updateMessageList = async (message: any, userId: string, callback: any) => {
+        firestore().collection(FirebaseKeys.USER).doc(userId)
+            .update({
+                messageList: message
+            }).then(() => {
+                callback(true);
+            }).catch((error) => {
+                callback(error);
+            });
+    }
+
+    static getReceiversMessages = (receiverId: string, callback: any) => {
+        firestore().collection(FirebaseKeys.USER).get().then((data) => {
+            const dataAlpha: any = [];
+            data.docs.forEach(items => {
+                if (items.data().id === receiverId) {
+                    const messageList = items.data();
+                    dataAlpha.push(messageList);
+                }
+            });
+            callback(dataAlpha);
+        }).catch((error) => {
+            console.log("error --->>>>", error);
+            callback(error);
+        });
     }
 
 }
