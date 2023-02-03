@@ -96,8 +96,6 @@ function Chat() {
         return new Date(x.timestamp) < new Date(y.timestamp) ? 1 : -1
     }).reverse();
 
-    console.log('messages :', messages);
-
     return (
         <ScreenContainer
             backgroundType={"screen"}

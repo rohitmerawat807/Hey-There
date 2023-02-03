@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import ScreenLayout from '../components/ScreenLayout';
 import MapboxGL from "@rnmapbox/maps";
@@ -18,6 +18,7 @@ function Map() {
     const mapboxRef = useRef(null);
     const navigation = useNavigation();
     const [coordinates, setCordinates] = useState([]);
+    const [isUpdatedOnce, setUpdateOnceState] = useState(false);
 
     React.useEffect(() => {
         getUserList()
@@ -31,6 +32,7 @@ function Map() {
             MapboxGL.locationManager.stop();
         };
     }, []);
+    
 
     const getUserList = async () => {
         const deviceId = await getUniqueId();
@@ -108,11 +110,17 @@ function Map() {
                     userTrackingMode>
                     <MapboxGL.Camera
                         followUserLocation={true}
-                        followZoomLevel={11}
+                        followZoomLevel={2}
                     />
                     <MapboxGL.UserLocation
                         visible={true}
                         animated={true}
+                        onUpdate={(location: any) => {
+                            setUpdateOnceState(true)
+                            if(!isUpdatedOnce && Platform.OS === 'android') {
+                                updateUserLocation(location.coords)
+                            }
+                        }}
                         requestsAlwaysUse={true}
                         renderMode={"native"} />
                     {renderAnnotations()}
